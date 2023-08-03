@@ -1,0 +1,22 @@
+\documentclass{article}
+%\usepackage{ctex}
+\usepackage{amsmath}
+\usepackage{amsthm}
+
+\newtheorem{theorem}{\indent 定理}[section]
+\newtheorem{lemma}[theorem]{\indent 引理}
+\newtheorem{proposition}[theorem]{\indent 命题}
+\newtheorem{corollary}[theorem]{\indent 推论}
+\newtheorem{definition}{\indent 定义}[section]
+\newtheorem{example}{\indent 例}[section]
+\newtheorem{remark}{\indent 注}[section]
+\newenvironment{solution}{\begin{proof}[\indent\bf 解]}{\end{proof}}
+\renewcommand{\proofname}{\indent\bf 证明}
+
+\begin{document}
+	\begin{definition}
+		\begin{equation}
+		\mathcal{a} J^\ast(\theta) = \frac{1}{k} * E[ \mathcal{l} (x;\theta)]
+		\end{equation}
+	\end{definition}
+\end{document}

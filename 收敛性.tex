@@ -1,0 +1,98 @@
+\documentclass{article}
+\usepackage[UTF8]{ctex}
+\usepackage{amsmath} % 数学数式排版
+\usepackage{amssymb} % 数学符号
+\usepackage{amsfonts} % 数学字体
+\usepackage{geometry} % 调整页边距
+\usepackage{amsthm}
+\usepackage{bm}
+\newtheorem{lemma}{lemma}
+\newtheorem{theorem}{定理}[section]
+% 设置页面布局
+\geometry{
+	a4paper,
+	left=20mm,
+	right=20mm,
+	top=25mm,
+	bottom=25mm
+}
+
+% 定义新命令，用于快速输入常用的数学符号
+\newcommand{\R}{\mathbb{R}} % 实数集
+\newcommand{\N}{\mathbb{N}} % 自然数集
+\newcommand{\C}{\mathbb{C}} % 复数集
+\newcommand{\Q}{\mathbb{Q}} % 有理数集
+\newcommand{\Z}{\mathbb{Z}} % 整数集
+
+\title{数学笔记}
+\author{Your Name}
+\date{\today}
+
+\begin{document}
+	\maketitle
+	
+	\section{引言}
+	\begin{lemma}
+		Given $f(x)$ is convex and L-smooth then
+		\begin{equation}
+		f(y)-f(x) \leq \nabla f(y)^T(y-x) - \frac{1}{2L}\Vert\nabla f(y)-\nabla f(x)\Vert^2_2\label{convLsmooth}
+		\end{equation}
+	\end{lemma}
+	
+	\begin{proof}[proof]
+		Because of the convexity of $f(x)$,
+			\begin{equation}
+					f(z)\geq f(y)+\nabla f(y)^T(z-y)\\ 
+					\Longleftrightarrow
+					f(y)-f(z)\leq \nabla f(y)^T(y-z)\label{convexity}
+			\end{equation}
+		Because $f$ is $L$ smooth:
+		\begin{equation*} 
+			f(z)\leq f(x) + \nabla f(x)^T(z-x)+\frac{L}{2}\Vert z-x \Vert_2^2 \Longleftrightarrow
+		\end{equation*}
+		\begin{equation}
+			f(z)-f(x)\leq \nabla f(x)^T(z-x)+\frac{L}{2}\Vert z - x \Vert_2^2\label{lsmooth}
+		\end{equation}
+		Using (\ref{convexity}) and (\ref{lsmooth}) we have:\\
+		\begin{equation}
+			f(y)-f(x) = f(y)-f(z) + f(z)-f(x)\leq \nabla f(y)^T(y-z) + \nabla f(x)^T(z-x) + \frac{L}{2}
+			\Vert z - x \Vert_2^2
+		\end{equation}
+		let $z=x-\frac{1}{L}(\nabla f(x) - \nabla f(y))$:
+		\begin{equation}
+			f(y)-f(x) \leq \nabla f(y)^T(y-x) - \frac{1}{2L} \Vert \nabla f(x) - \nabla f(y) \Vert_2^2
+		\end{equation}
+	\end{proof}
+	\begin{lemma}
+		Suppose $F_k$ is L-smooth with global minimum at $\bm{w}^\ast_k$,then for any $\bm{w}_k$ in the domain of $F_k$,we have that
+		\begin{equation}
+		l = \Vert \nabla F_k(\bm{w}_k) \Vert_2^2 \leq 2L(F_k(\bm{{w}}_k) - F_k(\bm{w}_k^\ast))
+		\end{equation}
+		\begin{proof}[proof]
+			Let $y=\bm{w}_k^\ast$ and $x = \bm{w}_k$ in (\ref{convLsmooth}), and $\nabla f(\bm{w}^\ast_k) = 0$
+		\end{proof}
+	\end{lemma}
+	\section{重要定理}
+	这里列举一些重要的定理，并附上其证明。
+		
+	\subsection{勾股定理}
+	勾股定理给出了直角三角形的边之间的关系。它可以用以下公式表示：
+	\begin{equation}
+		a^2 + b^2 = c^2
+	\end{equation}
+	其中，$a$ 和 $b$ 是直角三角形的两条直角边的长度，$c$ 是斜边的长度。
+	
+	\textbf{证明：}（略）
+	
+	\subsection{欧拉公式}
+	欧拉公式是数学中一条重要的公式，连接了五个基本数学常数：$e$（自然对数的底）、$\pi$（圆周率）、$i$（虚数单位）、$1$（单位元）和无穷远处的 $0$。它可以表示为：
+	\begin{equation}
+		e^{i\pi} + 1 = 0
+	\end{equation}
+	
+	\textbf{证明：}（略）
+	
+	\section{结论}
+	在这篇笔记中，我们总结了一些重要的数学定理和公式。
+	
+\end{document}

@@ -1,0 +1,119 @@
+\documentclass{article}
+\usepackage[UTF8]{ctex}
+\usepackage{amsmath} % 数学数式排版
+\usepackage{amssymb} % 数学符号
+\usepackage{amsfonts} % 数学字体
+\usepackage{geometry} % 调整页边距
+\usepackage{amsthm}
+\usepackage{bm}
+\newtheorem{lemma}{lemma}
+\newtheorem{theorem}{定理}[section]
+% 设置页面布局
+\geometry{
+	a4paper,
+	left=20mm,
+	right=20mm,
+	top=25mm,
+	bottom=25mm
+}
+
+% 定义新命令，用于快速输入常用的数学符号
+\newcommand{\R}{\mathbb{R}} % 实数集
+\newcommand{\N}{\mathbb{N}} % 自然数集
+\newcommand{\C}{\mathbb{C}} % 复数集
+\newcommand{\Q}{\mathbb{Q}} % 有理数集
+\newcommand{\Z}{\mathbb{Z}} % 整数集
+
+%\newtheorem{theorem}{\indent 定理}[section]
+%\newtheorem{lemma}[theorem]{\indent 引理}
+\newtheorem{proposition}[theorem]{\indent 命题}
+\newtheorem{corollary}[theorem]{\indent 推论}
+\newtheorem{definition}{\indent 定义}[section]
+\newtheorem{example}{\indent 例}[section]
+\newtheorem{remark}{\indent 注}[section]
+\newenvironment{solution}{\begin{proof}[\indent\bf 解]}{\end{proof}}
+\renewcommand{\proofname}{\indent\bf 证明}
+
+\title{联邦学习}
+%\author{Your Name}
+%\date{\today}
+
+\begin{document}
+	\maketitle
+	
+	\section{收敛性}
+
+		定义相似度矩阵 $\mathbf{L}\in \R^{N \times N}$，$\mathbf{L}_{i,j}$表示client $i$ 和client $j$的相似度，
+		k-DPP 采样：给出子集 $\mathbf{Y}$ 的采样概率,其中 $\mathbf{Y}$ 表示 $k$个clients的集合。
+		\begin{equation}
+			\mathbf{P}(\mathbf{Y}) = \frac{det(\mathbf{L}_Y)}{\sum_{|\mathbf{Y}'|=k} det(\mathbf{L}_{\mathbf{Y}'})}
+		\end{equation}
+		目标函数
+		\begin{equation}
+			\mathbf{J}(\theta) = \mathbb{E}_{x\backsim p_{data}}[l(x;\theta)]
+		\end{equation}
+		其中$p_{data}$是真实分布。
+		
+		联邦学习的优化目标
+		\begin{equation}
+			\mathbf{F}(\theta) = \sum_{i=1}^{n}p_if_i(\theta)=\sum_{i=1}^{n}\frac{D_i}{\sum_{i=1}^nD_i}\frac{1}{D_i}\sum_{x\in \mathcal{D}_i}l(x;\theta)
+		\end{equation}
+		定义$m_i$表示在dpp采样时client $i$是否被选中，$m_i \in \{0,1\}$,$b_i = \mathbb{E}(m_i)$,
+		当使用dpp采样方法时，重新定义优化目标为：
+		\begin{equation}
+			\widehat{\mathbf{F}}(\theta) =\frac{1}{k}\sum_{i=1}^n{}b_if_i({\theta})=\frac{1}{k}\sum_{i=1}^{n}b_i\frac{1}{D_i}\sum_{x\in \mathcal{D}_i}^{n}l(x;\theta)
+		\end{equation}
+		
+		更新策略：
+		\begin{equation}
+			\theta = \theta - \frac{1}{k}\sum_{i=1}^{n}m_i\nabla \widehat{f}_i(\theta) 
+		\end{equation}
+		其中 $\nabla \widehat{f}_i(\theta)=\sum_{t=1}^\tau\frac{1}{|\mathcal{B}_{i,t}|}\sum_{x\in \mathcal{B}_{i,t}}\nabla l(x;\theta_t)$
+		
+		
+		根据更新策略,求参数更新值的期望：
+		\begin{equation}
+			\mathbb{E}(g) = \mathbb{E}(\frac{1}{k}\sum_{i=1}^nm_i\nabla \widehat{f}_i(\theta))=\frac{1}{k}\sum_{i=1}^{n}b_i\nabla \widehat{f}_i(\theta)
+		\end{equation}
+		这个期望和目标函数$\widehat{F}(\theta)$的更新值相等，所以是策略是无偏的。
+		
+		定义 协方差
+		\begin{equation}
+			\mathbf{C}_{i,j} = \frac{\mathbb{E}[(m_i-b_i)(m_j-b_j)]}{\mathbb{E}(m_i)\mathbb{E}[m_j]}=\frac{\mathbb{E}(m_im_j)}{b_ib_j}-1
+		\end{equation}
+		
+		计算参数更新值的方差：
+		\begin{equation}
+			Var(g) = \mathbb{E}[(g-\mathbb{E}(g))^2] = \mathbb{E}[(\frac{1}{k}\sum_{i=1}^nm_i\nabla\widehat{f}_i(\theta)-\frac{1}{k}\sum_{i=1}^nb_i\nabla\widehat{f}_i(\theta))^2]=\frac{1}{k^2}\mathbb{E}[(\sum_{i=1}^n(m_i-b_i)\nabla\widehat{f}_i(\theta))^2]
+		\end{equation}
+		\begin{equation}
+			=\frac{1}{k^2}\mathbb{E}[(\sum_{i,j=1}^n(m_i-b_i)(m_j-b_j)\nabla\widehat{f}_i^T(\theta)\nabla\widehat{f}_j(\theta))]=\frac{1}{k^2}(\sum_{i,j=1}^n\mathbb{E}[(m_i-b_i)(m_j-b_j)]\nabla\widehat{f}_i^T(\theta)\nabla\widehat{f}_j(\theta))
+		\end{equation}
+		\begin{equation}
+			\begin{split}
+			\mathbb{E}[m_im_j]&=\mathbb{E}[m_i^2]\sigma_{ij}+\mathbb{E}[m_im_j](1-\sigma_{i,})\\
+			&=\mathbb{E}[m_i]\sigma_{ij}+(\mathbf{C}_{ij}+1)b_ib_j(1-\sigma_{ij})
+			\end{split}
+		\end{equation}
+		其中 $\sigma_{ij}=
+		\begin{cases}
+			1,i=j\\
+			0,i\neq j
+		\end{cases}$
+		\begin{equation}
+			\begin{split}
+					\mathbb{E}[(m_i-b_i)(m_j-b_j)]=\mathbb{E}[m_jm_i]-b_ib_j
+			\end{split}
+		\end{equation}
+		\begin{equation}
+			\begin{split}
+				Var(g)=\frac{1}{k^2}\sum_{i=1}^{n}(b_i-b_i^2)\Vert\nabla\widehat{f}_i(\theta)\Vert^2\\
+				+\frac{1}{k^2}\sum_{i\neq j}\mathbf{C}_{i,j}b_ib_j\nabla\widehat{f}_i^T(\theta)\nabla\widehat{f}_j(\theta)
+			\end{split}
+		\end{equation}
+		
+		假设$\mathbf{C}_{ij}\nabla\widehat{f}_i^T(\theta)\nabla\widehat{f}_j(\theta) \textless 0$
+		， 因此$Var(g)$减小了。
+		
+	
+\end{document}
